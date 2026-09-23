@@ -1,0 +1,79 @@
+"""Exercise 01: list create, read, update and delete."""
+
+subjects = ["Toán", "Văn", "Anh"]
+
+# TODO: append one subject and insert another at index 1.
+subjects.append("Lý")
+subjects.insert(1, "Hóa")
+print("Sau khi thêm:", subjects)
+
+# TODO: update the first subject.
+subjects[0] = "Sinh"
+print("Sau khi sửa:", subjects)
+
+# TODO: remove one known subject and pop the last subject.
+subjects.remove("Văn")
+subjects.pop()
+print("Sau khi xóa:", subjects)
+
+# TODO: print the first, last and middle slice after each safe operation.
+print("Phần tử đầu:", subjects[0])
+print("Phần tử cuối:", subjects[-1])
+print("Middle slice:", subjects[1:-1])
+
+print("Kết quả cuối:", subjects)
+
+
+--------------------------------------------------------------
+
+"""Exercise 02: slicing, mutability, alias and copy."""
+
+numbers = [1, 2, 3, 4, 5, 6]
+
+# Slicing
+first_three: list[int] = numbers[:3]
+last_three: list[int] = numbers[-3:]
+
+# Alias và copy
+alias: list[int] = numbers
+copied: list[int] = numbers.copy()
+
+# Thay đổi thông qua alias
+alias.append(7)
+
+print("numbers:", numbers)
+print("first_three:", first_three)
+print("last_three:", last_three)
+print("alias:", alias)
+print("copied:", copied)
+--------------------------------------------------------------
+
+"""Exercise 03: tuple, packing and unpacking."""
+
+coordinate = (3, 7)
+
+# Unpacking
+x, y = coordinate
+
+# Packing
+profile = ("Phát", 18, "Python")
+
+# Unpacking
+name, age, topic = profile
+
+# Swap bằng unpacking
+left = "A"
+right = "B"
+
+left, right = right, left
+
+print(x, y)
+print(name, age, topic)
+print(left, right)
+
+
+
+
+
+
+
