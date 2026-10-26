@@ -3,126 +3,92 @@
 VuaCóc Bot Journey là project xuyên khóa để người học nâng cấp cùng một hệ
 thống ra quyết định từ Week 07 đến Week 15. Game gốc có thể tham khảo tại
 [vuacoc.com](https://vuacoc.com/), nhưng track này chỉ dùng mô hình học tập
-local, không tuyên bố API/runtime compatibility. Người học không gặp `functions`,
-`dict`, JSON, exceptions, `pytest`, modules và OOP như những chương rời rạc:
+local, không tuyên bố API/runtime compatibility. Người học không gặp functions,
+dict, JSON, exceptions, pytest, modules và OOP như những chương rời rạc:
 mỗi chủ đề làm bot **more capable, more reliable, more explainable**.
 
-Đây là một spiral project, không phải project chỉ bắt đầu ở tuần cuối:
+## 1. Mục tiêu và phạm vi
+
+Capstone tích hợp một bot quyết định, local arena, ba baseline, match replay,
+tournament và test. Mục tiêu là tạo một chương trình chạy được, kiểm thử được
+và giải thích được — không phải khẳng định bot có chiến thuật tối ưu.
 
 ```text
-Observe state
-   ↓
-Choose action
-   ↓
-Run match
-   ↓
-Inspect result
-   ↓
-Test/debug
-   ↓
-Improve
+Observe state → Choose action → Run match → Inspect result
+                         ↑                         ↓
+                      Improve ← Test / Debug ← Replay
 ```
 
-Learning loop xuyên suốt:
+**Phạm vi được hỗ trợ:** course-local Line Arena, không cần API key, tài khoản
+game hoặc kết nối mạng. Kết quả chỉ chứng minh hành vi trong môi trường học tập
+local; không chứng minh tương thích với runtime production của VuaCóc.
+
+## 2. Kiến trúc và liên hệ Week 14
 
 ```text
-Learn → Build → Test → Debug → Improve → Commit → Prove
+Arena → choose_action(state) → Bot → strategy(state)
 ```
 
-## Course-local Line Arena
+- **Bot** là class nhận một strategy qua phương thức khởi tạo.
+- **Bot.choose_action()** ủy quyền quyết định cho strategy đã nhận.
+- **balanced_strategy** di chuyển về goal; **defensive_strategy** chờ nếu đối thủ
+  ở ô kề; **aggressive_strategy** tiếp tục ưu tiên tiến về goal.
+- Hàm **choose_action(state)** vẫn được giữ làm giao diện cho arena, nên không
+  cần sửa code điều phối trận đấu khi thay đổi cách triển khai bên trong.
+- Dữ liệu thiếu hoặc sai kiểu khiến policy mặc định trả về **wait**.
 
-Implementation local biến hành trình thành evidence chạy được:
+Đây là **composition** theo note Week 14: truyền hành vi vào object thay vì
+hardcode một chiến thuật trong class. Không cần inheritance vì các strategy
+không phải là những loại con của một class nền; các function đã đủ cho nhiệm vụ.
 
-```text
-Student Bot → Local Arena → Baseline Bots → Match → Replay → Evaluation
-```
-
-- [Local Arena](local_arena/README.md) sở hữu match loop và teaching contract.
-- [Baseline bots](baselines/README.md) cung cấp đúng ba policy minh bạch.
-- [Student Bot](student_bot/README.md) là starter xuyên khóa.
-
-```text
-COURSE_LOCAL_ARENA = YES
-VUACOC_PRODUCTION_COMPATIBILITY = NOT_CLAIMED
-NETWORK_CALLS = 0
-SECRETS = 0
-```
-
-## Hành trình W07–W15
+## 3. Hành trình W07–W15
 
 | Week | Milestone | Điều bot học thêm |
 |---|---|---|
-| W07 | [Function Bot](milestones/w07-function-bot.md) | quyết định xác định bằng function |
-| W08 | [State + Heuristic](milestones/w08-state-and-heuristic.md) | state có cấu trúc và rule dễ giải thích |
-| W09 | [Midterm Bot V1](milestones/w09-midterm-bot-v1.md) | ghép các phần thành bot chạy local |
-| W10 | [Replay + Data](milestones/w10-replay-and-data.md) | lưu evidence bằng file, JSON và CSV |
-| W11 | [Robust Bot](milestones/w11-robustness-and-debugging.md) | phân biệt lỗi phần mềm với thua chiến thuật |
-| W12 | [Tested Bot](milestones/w12-testing-with-pytest.md) | khóa hành vi bằng regression tests |
-| W13 | [Adapter Boundary](milestones/w13-modules-cli-arena-adapter.md) | tách bot core khỏi runtime adapter |
-| W14 | [Strategy Composition](milestones/w14-strategy-composition.md) | thay strategy mà không viết lại core |
-| W15 | [Capstone Tournament](milestones/w15-capstone-tournament.md) | tích hợp, đánh giá, giải thích và demo |
+| W07 | Function Bot | Quyết định xác định bằng function |
+| W08 | State + Heuristic | State có cấu trúc và rule dễ giải thích |
+| W09 | Midterm Bot V1 | Ghép các phần thành bot chạy local |
+| W10 | Replay + Data | Lưu evidence bằng file, JSON và CSV |
+| W11 | Robust Bot | Phân biệt lỗi phần mềm với thua chiến thuật |
+| W12 | Tested Bot | Khóa hành vi bằng regression tests |
+| W13 | Adapter Boundary | Tách bot core khỏi runtime adapter |
+| W14 | Strategy Composition | Thay strategy mà không viết lại core |
+| W15 | Capstone Tournament | Tích hợp, kiểm thử, đánh giá và demo |
 
-Tournament W15 chạy hai lượt A/B trước mỗi baseline để evidence không phụ thuộc
-một phía xuất phát. Các metric được báo riêng, không gộp thành rating.
+## 4. Cài đặt
 
-Xem [bảng milestone](MILESTONES.md), [kiến trúc](ARCHITECTURE.md),
-[evaluation](EVALUATION.md) và [trạng thái integration contract](INTEGRATION_CONTRACT.md).
-
-## Phạm vi của track
-
-VuaCóc Bot Journey là **flagship capstone track**: một lộ trình nổi bật giúp
-kết nối các tuần thành một câu chuyện phát triển liên tục. Đây không phải lựa
-chọn capstone bắt buộc duy nhất. Mọi capstone vẫn dùng yêu cầu và rubric
-canonical trong [`FINAL_PROJECT.md`](../../FINAL_PROJECT.md).
-
-Python Journey chỉ đi đến nhiều bot độc lập cùng tham gia môi trường chung,
-match, tournament và evaluation. Reinforcement learning, self-play training,
-MCTS chuyên sâu, opponent modeling nâng cao, LLM agent orchestration và hệ
-thống agent phân tán nằm ngoài phạm vi khóa học.
-
-## Trạng thái integration
-
-```text
-VUACOC_RUNTIME_CONTRACT = UNVERIFIED
-ARENA_ADAPTER = DESIGN_ONLY
-PRODUCTION_INTEGRATION = NO
-```
-
-Các milestone hiện dùng teaching models và local evidence. Không nội dung nào
-trong thư mục này được xem là contract runtime chính thức của VuaCóc.
-
-
-## Setup
-
-Yêu cầu Python 3.10+ và `pytest` để chạy bộ test. Từ thư mục gốc repository:
+Yêu cầu Python 3.10+ và pytest. Từ thư mục gốc repository:
 
 ```bash
 python -m pip install pytest
 ```
 
-Project chỉ dùng Python standard library trong phần chạy bot; không cần API key,
-tài khoản game hoặc kết nối mạng.
+Phần chạy bot chỉ sử dụng Python standard library; không cần API key hoặc
+network access.
 
-## Usage
+## 5. Sử dụng
 
-Chạy một match giữa bot của bạn và baseline:
+Chạy một match giữa student bot và baseline:
 
 ```bash
 python projects/vuacoc-bot-journey/local_arena/cli.py --bot-a student --bot-b forward --replay
 ```
 
-Chạy tournament với cả ba baseline:
+Chạy tournament với ba baseline:
 
 ```bash
 python projects/vuacoc-bot-journey/local_arena/tournament_cli.py
 ```
 
-Các kết quả chỉ áp dụng cho teaching model local, không chứng minh tương thích
-với runtime production của VuaCóc.
+Chạy ví dụ quyết định độc lập:
 
-## Test
+```bash
+python projects/vuacoc-bot-journey/student_bot/bot.py
+```
 
-Chạy toàn bộ test của project:
+## 6. Chạy test
+
+Chạy test của project từ thư mục gốc:
 
 ```bash
 python -m pytest projects/vuacoc-bot-journey/tests -q
@@ -134,13 +100,29 @@ Chạy readiness check cho capstone:
 python weeks/week-15-capstone-project/checks/check_capstone_readiness.py projects/vuacoc-bot-journey
 ```
 
-## Design decisions and limitations
+Các test kiểm tra hướng đi tới goal, action hợp lệ, state lỗi, tính xác định
+(determinism), và việc thay strategy thông qua composition.
 
-- Bot core chỉ nhận state dạng dictionary và trả một action; arena chịu trách nhiệm
-  điều phối match, kiểm tra action và ghi replay.
-- Bot chọn hướng dựa trên `position` và `goal`; state thiếu hoặc có kiểu dữ liệu
-  không hợp lệ sẽ trả `wait`.
-- Tournament báo riêng completion rate, legal-action rate, kết quả từng baseline
-  và số match lỗi; không gộp thành rating.
-- Đây là policy nền tảng, không phải chiến thuật tối ưu. Các bot có thể hòa nhau;
-  kết quả tournament không đại diện cho hiệu năng ngoài môi trường local.
+## 7. Cấu trúc chính
+
+- **student_bot/bot.py**: class Bot, các strategy và giao diện choose_action.
+- **local_arena/**: match loop, contract, replay và CLI.
+- **baselines/**: các bot đối chứng đơn giản.
+- **tests/**: regression tests cho bot, arena, replay và tournament.
+- **AI_USAGE.md**: công khai việc sử dụng AI hỗ trợ.
+
+## 8. Giới hạn đã biết
+
+- Đây là policy cơ bản, không phải chiến thuật tối ưu; bot có thể hòa.
+- Tên aggressive_strategy chỉ mang nghĩa tiếp tục tiến về goal trong local
+  arena. Arena không có action tấn công riêng.
+- Defensive policy có thể chờ khi đối thủ ở gần, làm giảm tốc độ tiến tới goal.
+- Tournament chỉ đo hành vi trong mô hình local; không đại diện hiệu năng thực tế.
+- Contract production của VuaCóc chưa được xác minh; project không tuyên bố tích
+  hợp production.
+
+## 9. AI usage
+
+Xem [AI_USAGE.md](AI_USAGE.md) để biết AI đã hỗ trợ những phần nào và cách các
+đề xuất được kiểm chứng. Người học cần tự chạy test, đọc code và hiểu các quyết
+định thiết kế trước khi nộp.
