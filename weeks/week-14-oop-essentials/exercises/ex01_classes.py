@@ -21,6 +21,21 @@ class Progress:
         return f"Progress: {self.completed}/{self.total} ({self.percentage():.0f}%)"
 
 
+class Student:
+    """Represent a student with a name and student ID."""
+
+    def __init__(self, name: str, student_id: str):
+        self.name = name
+        self.student_id = student_id
+
+    def introduce(self) -> str:
+        """Return a short introduction for this student."""
+        return f"Xin chào, mình là {self.name}, MSSV {self.student_id}"
+
+
 if __name__ == "__main__":
     progress = Progress(3, 4)
     print(progress)
+
+    student = Student("An", "SV001")
+    print(student.introduce())
